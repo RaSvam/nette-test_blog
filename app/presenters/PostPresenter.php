@@ -80,13 +80,12 @@ class PostPresenter extends Nette\Application\UI\Presenter
         return $form;
     }
     public function postFormSucceeded($form, $values){
-
+        //creates new log and stream + name for it
         $log = new Logger('posts');
         $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\posts.log'), Logger::INFO);
 
         //called on successful posting of a post
         $post_id = $this->getParameter('post_id');
-        $getId = $this->database->table('posts')->get($post_id);
         //if post with post_id exists, update his value
         if ($post_id) {
             $post = $this->database->table('posts')->get($post_id);
@@ -97,6 +96,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
             $post = $this->database->table('posts')->insert($values);
         }
         $this->flashMessage('New post has been published.', 'success');
+        //log into the streamhandler stream
         $log->info("New post created");
         $this->redirect('showSingle', $post->id);
     }

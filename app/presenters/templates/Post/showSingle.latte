@@ -1,6 +1,6 @@
 {block content}
 
-<div class="showAll">
+<div class="showSingle">
 
 
 <h1 n:block="title">{$post->title}</h1>
@@ -14,11 +14,11 @@
 
 {control commentForm}
 
-<h2>Komentáře</h2>
+<h2>Comments</h2>
 
 <div class="comments">
     {foreach $comments as $comment}
-        <p><b><a href="mailto:{$comment->email}" n:tag-if="$comment->email">{$comment->name}</a></b> napsal:</p>
+        <p class="comment"><b>{$comment->name}</b> wrote:</p>
         <div>{$comment->content}</div>
     {/foreach}
     <p><a n:href="Homepage:default">← back to all</a></p>

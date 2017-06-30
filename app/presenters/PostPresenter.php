@@ -3,6 +3,8 @@ namespace App\Presenters;
 
 use Nette;
 use Nette\Application\UI\Form;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 
 class PostPresenter extends Nette\Application\UI\Presenter
@@ -16,7 +18,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
         //Nette database connection
     }
 
-    public function renderShowAll($post_id)
+    public function renderShowSingle($post_id)
     {
         //render all posts from the database
         $post=$this->database->table('posts')->get($post_id);
@@ -78,9 +80,13 @@ class PostPresenter extends Nette\Application\UI\Presenter
         return $form;
     }
     public function postFormSucceeded($form, $values){
+
+        $log = new Logger('posts');
+        $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\posts.log'), Logger::INFO);
+
         //called on successful posting of a post
         $post_id = $this->getParameter('post_id');
-
+        $getId = $this->database->table('posts')->get($post_id);
         //if post with post_id exists, update his value
         if ($post_id) {
             $post = $this->database->table('posts')->get($post_id);
@@ -91,8 +97,8 @@ class PostPresenter extends Nette\Application\UI\Presenter
             $post = $this->database->table('posts')->insert($values);
         }
         $this->flashMessage('New post has been published.', 'success');
-        //
-        $this->redirect('showAll', $post->id);
+        $log->info("New post created");
+        $this->redirect('showSingle', $post->id);
     }
     public function actionEditArticle($post_id)
     {

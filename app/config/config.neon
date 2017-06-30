@@ -13,3 +13,10 @@ session:
 
 services:
 	router: App\RouterFactory::createRouter
+extensions:
+    monolog: Kdyby\Monolog\DI\MonologExtension
+monolog:
+#fallback saves logs to /log/ - only useful with localhost
+    name: myblog
+    registerFallback: yes
+

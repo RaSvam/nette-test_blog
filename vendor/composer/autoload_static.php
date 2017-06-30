@@ -11,9 +11,41 @@ class ComposerStaticInit091ed5d24b4127ffc48411e34be2086f
         'e7a6fd2e7a869bb207158e9416bdd9b0' => __DIR__ . '/..' . '/nette/application/src/compatibility.php',
     );
 
+    public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'Psr\\Log\\' => 8,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
+        ),
+        'K' => 
+        array (
+            'Kdyby\\Monolog\\' => 14,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Kdyby\\Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kdyby/monolog/src',
+        ),
+    );
+
     public static $classMap = array (
         'DG\\ComposerCleaner\\Cleaner' => __DIR__ . '/..' . '/dg/composer-cleaner/src/ComposerCleaner/Cleaner.php',
         'DG\\ComposerCleaner\\Plugin' => __DIR__ . '/..' . '/dg/composer-cleaner/src/ComposerCleaner/Plugin.php',
+        'Kdyby\\Monolog\\Exception' => __DIR__ . '/..' . '/kdyby/monolog/src/exceptions.php',
+        'Kdyby\\Monolog\\NotSupportedException' => __DIR__ . '/..' . '/kdyby/monolog/src/exceptions.php',
         'Latte\\CompileException' => __DIR__ . '/..' . '/latte/latte/src/Latte/exceptions.php',
         'Latte\\Compiler' => __DIR__ . '/..' . '/latte/latte/src/Latte/Compiler/Compiler.php',
         'Latte\\Engine' => __DIR__ . '/..' . '/latte/latte/src/Latte/Engine.php',
@@ -379,6 +411,8 @@ class ComposerStaticInit091ed5d24b4127ffc48411e34be2086f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit091ed5d24b4127ffc48411e34be2086f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit091ed5d24b4127ffc48411e34be2086f::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit091ed5d24b4127ffc48411e34be2086f::$classMap;
 
         }, null, ClassLoader::class);

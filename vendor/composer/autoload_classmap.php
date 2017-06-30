@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'DG\\ComposerCleaner\\Cleaner' => $vendorDir . '/dg/composer-cleaner/src/ComposerCleaner/Cleaner.php',
     'DG\\ComposerCleaner\\Plugin' => $vendorDir . '/dg/composer-cleaner/src/ComposerCleaner/Plugin.php',
+    'Kdyby\\Monolog\\Exception' => $vendorDir . '/kdyby/monolog/src/exceptions.php',
+    'Kdyby\\Monolog\\NotSupportedException' => $vendorDir . '/kdyby/monolog/src/exceptions.php',
     'Latte\\CompileException' => $vendorDir . '/latte/latte/src/Latte/exceptions.php',
     'Latte\\Compiler' => $vendorDir . '/latte/latte/src/Latte/Compiler/Compiler.php',
     'Latte\\Engine' => $vendorDir . '/latte/latte/src/Latte/Engine.php',

@@ -1,0 +1,17 @@
+<!-- homepage content block -->
+{block content}
+	<h1 class="mainTitle" n:block="title">Welcome to my blog</h1>
+
+	<!-- action redirecting to App\Post\create.latte -->
+	<a n:href="Post:create">Write new post</a>
+
+	<!-- n:macro to display certain rows located in posts table -->
+	<div n:foreach="$posts as $post">
+		<h2><a n:href="Post:showAll $post->id">{$post->title}</a></h2>
+		<div class="content">{$post->content}</div>
+		<div class="date">Posted by  on {$post->created_at|date:'F j, Y'}</div>
+	</div>
+	<br>
+
+
+{/block}

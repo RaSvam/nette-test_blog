@@ -14,8 +14,9 @@ class PostPresenter extends Nette\Application\UI\Presenter
 
     public function __construct(Nette\Database\Context $database)
     {
-        $this->database = $database;
         //Nette database connection
+        $this->database = $database;
+        
     }
 
     public function renderShowSingle($post_id)
@@ -38,8 +39,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
         $form->addText('name', 'Name:')
             ->setRequired();
 
-        $form->addEmail('email', 'Email:');
-
+        $form->addEmail('email', 'Email:')->setDefaultValue('@');
         $form->addTextArea('content', 'Comment:')
             ->setRequired();
 
@@ -48,8 +48,12 @@ class PostPresenter extends Nette\Application\UI\Presenter
         return $form;
     }
 
-    public function commentFormSucceeded($form, $values)
+    public function commentFormSucceeded($form, array $values)
     {
+        //creates new log and stream
+        $log = new Logger('comments');
+        $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\comments.log'), Logger::INFO);
+
         //called on successful posting of a comment
         $post_id = $this->getParameter('post_id');
         $this->database->table('comments')->insert([
@@ -59,8 +63,12 @@ class PostPresenter extends Nette\Application\UI\Presenter
             'content' => $values->content,
         ]);
 
+        //log into the streamhandler stream
+        $log->info("New comment posted",$values);
+
         $this->flashMessage('Thank you for your comment', 'success');
         $this->redirect('this');
+
     }
     protected function createComponentPostForm()
     {
@@ -69,7 +77,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
         $form->addText('title', 'Title of the post:')
             ->setRequired();
         $form->addText( 'name', 'Your Name');
-        $form->addText('email', 'Your email address: ')->setDefaultValue('@')->setRequired()->addRule(Form::EMAIL, 'Invalid email address');
+        $form->addEmail('email', 'Your email address: ')->setDefaultValue('@')->setRequired();
 
         $form->addTextArea('content', 'Content:')
             ->setRequired();
@@ -77,7 +85,6 @@ class PostPresenter extends Nette\Application\UI\Presenter
 
         //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
-
         return $form;
     }
     public function postFormSucceeded($form, array $values){
@@ -98,8 +105,11 @@ class PostPresenter extends Nette\Application\UI\Presenter
             $post = $this->database->table('posts')->insert($values);
         }
         $this->flashMessage('New post has been published.', 'success');
+
         //log into the streamhandler stream
         $log->info("New post created",$values);
+
+        //redirecting back to showSingle template
         $this->redirect('showSingle', $post->id);
     }
     public function actionEditArticle($post_id)

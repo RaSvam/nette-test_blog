@@ -66,26 +66,28 @@ class PostPresenter extends Nette\Application\UI\Presenter
     {
         //post form factory
         $form = new Form;
-        $form->addText('title', 'Title:')
+        $form->addText('title', 'Title of the post:')
             ->setRequired();
         $form->addText( 'name', 'Your Name');
+        $form->addText('email', 'Your email address: ')->setDefaultValue('@')->setRequired()->addRule(Form::EMAIL, 'Invalid email address');
 
         $form->addTextArea('content', 'Content:')
             ->setRequired();
         $form->addSubmit('send', 'Save & publish');
 
-        //if successful, call on postFormSucceeded
+        //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
 
         return $form;
     }
-    public function postFormSucceeded($form, $values){
-        //creates new log and stream + name for it
+    public function postFormSucceeded($form, array $values){
+        //creates new log and stream
         $log = new Logger('posts');
         $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\posts.log'), Logger::INFO);
 
         //called on successful posting of a post
         $post_id = $this->getParameter('post_id');
+
         //if post with post_id exists, update his value
         if ($post_id) {
             $post = $this->database->table('posts')->get($post_id);
@@ -97,7 +99,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
         }
         $this->flashMessage('New post has been published.', 'success');
         //log into the streamhandler stream
-        $log->info("New post created");
+        $log->info("New post created",$values);
         $this->redirect('showSingle', $post->id);
     }
     public function actionEditArticle($post_id)

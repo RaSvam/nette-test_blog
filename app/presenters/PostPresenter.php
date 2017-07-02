@@ -14,27 +14,30 @@ class PostPresenter extends Nette\Application\UI\Presenter
 
     public function __construct(Nette\Database\Context $database)
     {
-        //Nette database connection
+        //Nette database connection using DI
         $this->database = $database;
-        
+
     }
 
     public function renderShowSingle($post_id)
     {
         //render all posts from the database
         $post=$this->database->table('posts')->get($post_id);
+
+        //if post with post_id doesn't exist, throw an error
         if (!$post) {
             $this->error('Page not found');
         }
-
+        //render single post and related comments (1:n post - comment)
         $this->template->post = $post;
         $this->template->comments = $post->related('comment')->order('timestamp');
     }
 
+
     protected function createComponentCommentForm()
     {
         //comment form factory
-        $form = new Form; // means Nette\Application\UI\Form
+        $form = new Form; // Nette\Application\UI\Form
 
         $form->addText('name', 'Name:')
             ->setRequired();
@@ -48,11 +51,9 @@ class PostPresenter extends Nette\Application\UI\Presenter
         return $form;
     }
 
-    public function commentFormSucceeded($form, array $values)
+    public function commentFormSucceeded($form, $values)
     {
-        //creates new log and stream
-        $log = new Logger('comments');
-        $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\comments.log'), Logger::INFO);
+
 
         //called on successful posting of a comment
         $post_id = $this->getParameter('post_id');
@@ -63,8 +64,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
             'content' => $values->content,
         ]);
 
-        //log into the streamhandler stream
-        $log->info("New comment posted",$values);
+
 
         $this->flashMessage('Thank you for your comment', 'success');
         $this->redirect('this');
@@ -72,7 +72,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
     }
     protected function createComponentPostForm()
     {
-        //post form factory
+        //post form factory and assign ajax class
         $form = new Form;
         $form->addText('title', 'Title of the post:')
             ->setRequired();
@@ -87,7 +87,8 @@ class PostPresenter extends Nette\Application\UI\Presenter
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
         return $form;
     }
-    public function postFormSucceeded($form, array $values){
+    public function postFormSucceeded($form, array $values)
+    {
         //creates new log and stream
         $log = new Logger('posts');
         $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\posts.log'), Logger::INFO);
@@ -99,29 +100,41 @@ class PostPresenter extends Nette\Application\UI\Presenter
         if ($post_id) {
             $post = $this->database->table('posts')->get($post_id);
             $post->update($values);
-        }
-        //else create new post with post_id value
+            $this->flashMessage('The post has been edited.', 'success');
+        } //else create new post with post_id value
         else {
             $post = $this->database->table('posts')->insert($values);
+            $this->flashMessage('New post has been published.', 'success');
         }
-        $this->flashMessage('New post has been published.', 'success');
 
-        //log into the streamhandler stream
-        $log->info("New post created",$values);
 
-        //redirecting back to showSingle template
-        $this->redirect('showSingle', $post->id);
+            //log into the streamhandler stream
+            $log->info("New post created", $values);
+
+
     }
-    public function actionEditArticle($post_id)
+
+    public function actionEditPost($post_id)
     {
-        //used to edit articles with {action} macro
+        //used to edit posts with {action} macro
         $post = $this->database->table('posts')->get($post_id);
         if(!$post_id){
-            $this->error("No article found");
+            $this->error("Post not found");
 
     }
         //content is saved into the existing post_content
         $this['postForm']->setDefaults($post->toArray());
+    }
+    public function actionDeletePost($post_id)
+    {
+        //used to delete posts with {action} macro
+        $post = $this->database->table('posts')->where('id',$post_id)->delete();
+        if(!$post_id){
+            $this->error("Post not found");
+
+        }
+        $this->flashMessage("Post has been deleted");
+
     }
 
 }

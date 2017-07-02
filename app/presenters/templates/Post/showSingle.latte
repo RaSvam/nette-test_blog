@@ -5,22 +5,24 @@
 
 <h1 n:block="title">{$post->title}</h1>
 <div class="date">Posted on {$post->created_at|date:'F j, Y'}</div>
-<br><br>
+
 
 <div class="post">{$post->content}</div>
 <br>
-<a n:href="editArticle $post->id">Edit article</a>
-<br><br>
+<a n:href="editPost $post->id">Edit post</a>
+    <br>
 
+    <a n:href="deletePost $post->id">Delete post</a>
+    <br><br>
 {control commentForm}
 
 <h2>Comments</h2>
 
 <div class="comments">
-    {foreach $comments as $comment}
+    <div n:foreach ="$comments as $comment">
         <p class="comment"><b>{$comment->name}</b> wrote:</p>
         <div>{$comment->content}</div>
-    {/foreach}
+    </div>
     <p><a n:href="Homepage:default">← back to all</a></p>
 </div>
 </div>

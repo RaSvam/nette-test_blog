@@ -4,13 +4,25 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="https://cdn.rawgit.com/RaSvam/js/49448fdc/js/jquery-3.2.1.js"></script>
+	<script src="https://cdn.rawgit.com/RaSvam/js/f58d53a2/js/jquery.nette.js"></script>
+	<script src="https://cdn.rawgit.com/RaSvam/js/5bcbc427/js/nette.ajax.js"></script>
+	<script src="https://cdn.rawgit.com/RaSvam/js/ec48c0e1/js/ajax.js"></script>
+	<!-- init nette.ajax.js-->
+	<script>
+
+        $(function () {
+            $.nette.init();
+        });
+	</script>
 
 	<title>{ifset title}{include title|stripHtml} | {/ifset}Nette Web</title>
 </head>
 
 <body>
+	{snippet flashes}
 	<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
-
+	{/snippet}
 	{include content}
 
 	{block scripts}

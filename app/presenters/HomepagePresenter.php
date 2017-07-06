@@ -19,39 +19,41 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     }
     public function renderDefault()
     {
+        //rendering of posts
         $this->template->posts = $this->database->table('posts')
             ->order('created_at DESC');
             //->limit(3);
     }
     public function afterRender()
     {
+        //ajaxing flash messages
         if ($this->isAjax() && $this->hasFlashSession())
             $this->redrawControl('flashes');
     }
     protected function createComponentPostForm()
     {
-        //post form factory and assign ajax class
+        //post form factory and assigning ajax class
         $form = new Form;
         $form->getElementPrototype()->setAttribute('class','ajax');
-        $form->addText('title', 'Title of the post:')
+        $form->addText('title', 'Title:')
             ->setRequired();
-        $form->addText( 'name', 'Your Name');
-        $form->addEmail('email', 'Your email address: ')->setDefaultValue('@')->setRequired();
+        $form->addText( 'name', 'Name:');
+        $form->addEmail('email', 'Email address: ')->setDefaultValue('@')->setRequired();
 
         $form->addTextArea('content', 'Content:')
             ->setRequired();
-        $form->addSubmit('send', 'Save & publish');
+        $form->addSubmit('send', 'Save & publish')->setAttribute('class', 'btn btn-default');
 
         //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
         return $form;
     }
     public function postFormSucceeded($form, array $values){
-        //creates new log and stream
+        //creates new log and stream if posting form succeeded
         $log = new Logger('posts');
         $log->pushHandler(new StreamHandler('c:\xampp\htdocs\nette-blog\logs\posts.log'), Logger::INFO);
 
-        //called on successful posting of a post
+        //get post_id of the post
         $post_id = $this->getParameter('post_id');
 
         //if post with post_id exists, update his value
@@ -65,11 +67,14 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
             $post = $this->database->table('posts')->insert($values);
             $this->flashMessage('New post has been published.', 'success');
         }
+        //if it has class ajax, redraw list and form snippets
         if ($this->isAjax()){
             $this->redrawControl('list');
             $this->redrawControl('form');
+            //reset values in the form
             $form->setValues(array(), True);
         }
+        //else redirect to this page
         else {
             $this->redirect('this');
         }

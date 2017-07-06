@@ -46,7 +46,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
         $form->addTextArea('content', 'Comment:')
             ->setRequired();
 
-        $form->addSubmit('send', 'Send comment');
+        $form->addSubmit('send', 'Send comment')->setAttribute('class', 'btn btn-default');
         $form->onSuccess[] = [$this, 'commentFormSucceeded'];
         return $form;
     }
@@ -81,7 +81,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
 
         $form->addTextArea('content', 'Content:')
             ->setRequired();
-        $form->addSubmit('send', 'Save & publish');
+        $form->addSubmit('send', 'Save & publish')->setAttribute('class', 'btn btn-default');
 
         //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];

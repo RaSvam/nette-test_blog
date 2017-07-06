@@ -13,6 +13,7 @@ session:
 
 services:
 	router: App\RouterFactory::createRouter
+	- PostForm
 extensions:
     monolog: Kdyby\Monolog\DI\MonologExtension
 monolog:

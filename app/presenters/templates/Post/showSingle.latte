@@ -14,15 +14,19 @@
 
     <a n:href="deletePost $post->id">Delete post</a>
     <br><br>
+    <h3>Post new comment</h3>
 {control commentForm}
 
 <h2>Comments</h2>
 
 <div class="comments">
+
     <div n:foreach ="$comments as $comment">
         <p class="comment"><b>{$comment->name}</b> wrote:</p>
         <div>{$comment->content}</div>
     </div>
-    <p><a n:href="Homepage:default">← back to all</a></p>
+    <a n:href="Homepage:default" class="btn btn-default btn-big">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back to all
+    </a>
 </div>
 </div>

@@ -3,7 +3,6 @@
 namespace App\Presenters;
 
 use Nette;
-use Nette\Application\UI\Form;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -11,10 +10,13 @@ use Monolog\Handler\StreamHandler;
 class HomepagePresenter extends Nette\Application\UI\Presenter
 {
     private $database;
-    public function __construct(Nette\Database\Context $database)
+
+    private $postFormFactory;
+    public function __construct(Nette\Database\Context $database, \PostForm $postFormFactory)
     {
         //Nette database connection using DI
         $this->database= $database;
+        $this->postFormFactory = $postFormFactory;
 
     }
     public function renderDefault()
@@ -22,7 +24,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
         //rendering of posts
         $this->template->posts = $this->database->table('posts')
             ->order('created_at DESC');
-            //->limit(3);
+        //->limit(3);
     }
     public function afterRender()
     {
@@ -32,18 +34,7 @@ class HomepagePresenter extends Nette\Application\UI\Presenter
     }
     protected function createComponentPostForm()
     {
-        //post form factory and assigning ajax class
-        $form = new Form;
-        $form->getElementPrototype()->setAttribute('class','ajax');
-        $form->addText('title', 'Title:')
-            ->setRequired();
-        $form->addText( 'name', 'Name:');
-        $form->addEmail('email', 'Email address: ')->setDefaultValue('@')->setRequired();
-
-        $form->addTextArea('content', 'Content:')
-            ->setRequired();
-        $form->addSubmit('send', 'Save & publish')->setAttribute('class', 'btn btn-default');
-
+        $form = $this->postFormFactory->create(1);
         //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
         return $form;

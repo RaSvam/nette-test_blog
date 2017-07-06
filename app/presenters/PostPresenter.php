@@ -12,10 +12,12 @@ class PostPresenter extends Nette\Application\UI\Presenter
     /** @var Nette\Database\Context */
     private $database;
 
-    public function __construct(Nette\Database\Context $database)
+    private $postFormFactory;
+    public function __construct(Nette\Database\Context $database, \PostForm $postFormFactory)
     {
         //Nette database connection using DI
-        $this->database = $database;
+        $this->database= $database;
+        $this->postFormFactory = $postFormFactory;
 
     }
 
@@ -72,17 +74,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
     }
     protected function createComponentPostForm()
     {
-        //post form factory and assign ajax class
-        $form = new Form;
-        $form->addText('title', 'Title of the post:')
-            ->setRequired();
-        $form->addText( 'name', 'Your Name');
-        $form->addEmail('email', 'Your email address: ')->setDefaultValue('@')->setRequired();
-
-        $form->addTextArea('content', 'Content:')
-            ->setRequired();
-        $form->addSubmit('send', 'Save & publish')->setAttribute('class', 'btn btn-default');
-
+        $form = $this->postFormFactory->create(0);
         //if successful, call postFormSucceeded
         $form->onSuccess[] = [$this, 'postFormSucceeded'];
         return $form;

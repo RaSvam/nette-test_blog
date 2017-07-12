@@ -18,15 +18,17 @@
 {control commentForm}
 
 <h2>Comments</h2>
-
+{snippet comments}
 <div class="comments">
 
     <div n:foreach ="$comments as $comment">
         <p class="comment"><b>{$comment->name}</b> wrote:</p>
         <div>{$comment->content}</div>
     </div>
+
     <a n:href="Homepage:default" class="btn btn-default btn-big">
     <span class="glyphicon glyphicon-arrow-left"></span> Back to all
     </a>
+    {/snippet}
 </div>
 </div>

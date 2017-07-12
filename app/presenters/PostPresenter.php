@@ -12,25 +12,35 @@ class PostPresenter extends Nette\Application\UI\Presenter
     /** @var Nette\Database\Context */
     private $database;
 
-    private $postFormFactory;
-    public function __construct(Nette\Database\Context $database, \PostForm $postFormFactory)
+    /** @var \PostForm @inject */
+    public $postFormFactory;
+
+    public function __construct(Nette\Database\Context $database)
     {
         //Nette database connection using DI
         $this->database= $database;
-        $this->postFormFactory = $postFormFactory;
 
+
+    }
+
+    public function afterRender()
+    {
+
+        //ajaxing flash messages
+        if ($this->isAjax() && $this->hasFlashSession())
+            $this->redrawControl('flashes');
     }
 
     public function renderShowSingle($post_id)
     {
-        //render all posts from the database
+        //saves single post with post_id from the database into $post
         $post=$this->database->table('posts')->get($post_id);
 
         //if post with post_id doesn't exist, throw an error
         if (!$post) {
             $this->error('Page not found');
         }
-        //render single post and related comments (1:n post - comment)
+        //renders single post and related comments (1:n post - comment)
         $this->template->post = $post;
         $this->template->comments = $post->related('comment')->order('timestamp');
     }
@@ -40,7 +50,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
     {
         //comment form factory
         $form = new Form; // Nette\Application\UI\Form
-
+        $form->getElementPrototype()->setAttribute('class', 'ajax');
         $form->addText('name', 'Name:')
             ->setRequired();
 
@@ -57,7 +67,7 @@ class PostPresenter extends Nette\Application\UI\Presenter
     {
 
 
-        //called on successful posting of a comment
+        //called upon successful posting of a comment
         $post_id = $this->getParameter('post_id');
         $this->database->table('comments')->insert([
             'post_id' => $post_id,
@@ -65,8 +75,6 @@ class PostPresenter extends Nette\Application\UI\Presenter
             'email' => $values->email,
             'content' => $values->content,
         ]);
-
-
 
         $this->flashMessage('Thank you for your comment', 'success');
         $this->redirect('this');
@@ -120,7 +128,10 @@ class PostPresenter extends Nette\Application\UI\Presenter
     public function actionDeletePost($post_id)
     {
         //used to delete posts with {action} macro
+        $post = $this->database->table('comments')->where('post_id',$post_id)->delete();
         $post = $this->database->table('posts')->where('id',$post_id)->delete();
+
+        //if post with post_id doesn't exist, throw an error
         if(!$post_id){
             $this->error("Post not found");
 

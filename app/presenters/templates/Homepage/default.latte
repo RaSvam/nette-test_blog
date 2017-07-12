@@ -15,7 +15,7 @@
 		<div n:foreach="$posts as $id => $post">
 			<h2><a n:href="Post:showSingle $post->id">{$post->title}</a></h2>
 			<div class="content">{$post->content}</div>
-			<div class="date">Posted by <a href='mailto:{$post->email}'>{$post->name}</a> on
+			<div class="date">Posted by <a href='mailto:{$post->email}'>{$post->name} {$post->surname}</a> on
 				{$post->created_at|date:'F j, Y'}</div>
 
 		</div>

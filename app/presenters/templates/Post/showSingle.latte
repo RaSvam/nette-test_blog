@@ -22,7 +22,7 @@
 <div class="comments">
 
     <div n:foreach ="$comments as $comment">
-        <p class="comment"><b>{$comment->name}</b> wrote:</p>
+        <p class="comment"><a href='mailto:{$post->email}'><b>{$comment->name}</b></a> wrote:</p>
         <div>{$comment->content}</div>
     </div>
 

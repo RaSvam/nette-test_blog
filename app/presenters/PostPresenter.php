@@ -75,9 +75,14 @@ class PostPresenter extends Nette\Application\UI\Presenter
             'email' => $values->email,
             'content' => $values->content,
         ]);
+        if ($this->isAjax()){
+            $this->redrawControl('comments');
+        }
+        else {
+            $this->redirect('this');
+        }
 
         $this->flashMessage('Thank you for your comment', 'success');
-        $this->redirect('this');
 
     }
     protected function createComponentPostForm()

@@ -21,7 +21,8 @@ class PostForm extends Control
     }
         $form->addText('title', 'Title:')
             ->setRequired();
-        $form->addText( 'name', 'Name:');
+        $form->addText( 'name', 'First name:');
+        $form->addText( 'surname', 'Surname:');
         $form->addEmail('email', 'Email address: ')->setDefaultValue('@')
             ->setRequired();
 
